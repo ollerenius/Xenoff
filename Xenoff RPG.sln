@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio for Mac
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xenoff RPG.Plugins", "Xenoff RPG.Plugins.csproj", "{85E6CA36-437B-E092-FE79-5B81EC7A2EA5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xenoff RPG", "Xenoff RPG.csproj", "{E7CED118-8AD4-122F-89AC-CA0948F05415}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xenoff RPG.Editor.Plugins", "Xenoff RPG.Editor.Plugins.csproj", "{C426128F-6CBC-3AB8-462A-297F00A679D9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{85E6CA36-437B-E092-FE79-5B81EC7A2EA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85E6CA36-437B-E092-FE79-5B81EC7A2EA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85E6CA36-437B-E092-FE79-5B81EC7A2EA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85E6CA36-437B-E092-FE79-5B81EC7A2EA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7CED118-8AD4-122F-89AC-CA0948F05415}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7CED118-8AD4-122F-89AC-CA0948F05415}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7CED118-8AD4-122F-89AC-CA0948F05415}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7CED118-8AD4-122F-89AC-CA0948F05415}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C426128F-6CBC-3AB8-462A-297F00A679D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C426128F-6CBC-3AB8-462A-297F00A679D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C426128F-6CBC-3AB8-462A-297F00A679D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C426128F-6CBC-3AB8-462A-297F00A679D9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
