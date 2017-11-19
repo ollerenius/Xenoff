@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityStandardAssets.Characters.ThirdPerson;
 
 [RequireComponent(typeof(ThirdPersonCharacter))]
 public class PlayerMovement : MonoBehaviour {
@@ -11,6 +10,8 @@ public class PlayerMovement : MonoBehaviour {
     Vector3 m_CamForward;             // The current forward direction of the camera
     Vector3 m_Move;
     bool m_Jump;                      // the world-relative desired move direction, calculated from the camForward and user input.
+
+	bool isSprinting;
 
 	void Start () {
 		// get the transform of the main camera
@@ -39,6 +40,10 @@ public class PlayerMovement : MonoBehaviour {
 		float v = Input.GetAxis("Vertical");
 		bool crouch = Input.GetKey(KeyCode.C);
 
+		if (Input.GetKeyUp(KeyCode.LeftShift)) {
+			isSprinting = !isSprinting;
+		}
+
 		// calculate move direction to pass to character
 		if (m_Cam != null) {
 			// calculate camera relative direction to move:
@@ -50,7 +55,7 @@ public class PlayerMovement : MonoBehaviour {
 		}
 
 		// pass all parameters to the character control script
-		m_Character.Move(m_Move, crouch, m_Jump);
+		m_Character.Move(m_Move, crouch, m_Jump, isSprinting);
 		m_Jump = false;
 	}
 
