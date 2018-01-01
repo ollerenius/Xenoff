@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(ThirdPersonCharacter))]
+[RequireComponent(typeof(CustomThirdPersonCharacter))]
 public class PlayerMovement : MonoBehaviour {
 
-	ThirdPersonCharacter m_Character; // A reference to the ThirdPersonCharacter on the object
+	CustomThirdPersonCharacter m_Character; // A reference to the ThirdPersonCharacter on the object
     Transform m_Cam;                  // A reference to the main camera in the scenes transform
     Vector3 m_CamForward;             // The current forward direction of the camera
     Vector3 m_Move;
@@ -24,7 +24,8 @@ public class PlayerMovement : MonoBehaviour {
 		}
 
 		// get the third person character ( this should never be null due to require component )
-		m_Character = GetComponent<ThirdPersonCharacter>();
+		m_Character = GetComponent<CustomThirdPersonCharacter>();
+		Debug.Log(m_Character == null);
 	}
 
 	void Update () {
