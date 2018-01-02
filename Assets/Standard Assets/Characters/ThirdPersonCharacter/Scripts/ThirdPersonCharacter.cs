@@ -41,8 +41,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
 
 
 		public void Move(Vector3 move, bool crouch, bool jump) {
-			// CHANGE: Pass this vector to HandleAirborneMovement
-			Vector3 rawMove = move;
+
 			// convert the world relative moveInput vector into a local-relative
 			// turn amount and forward amount required to head in the desired
 			// direction.
@@ -59,7 +58,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
 			if (m_IsGrounded) {
 				HandleGroundedMovement(crouch, jump);
 			} else {
-				HandleAirborneMovement(rawMove);
+				HandleAirborneMovement();
 			}
 
 			ScaleCapsuleForCrouching(crouch);
@@ -133,12 +132,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
 		}
 
 
-		void HandleAirborneMovement(Vector3 move) {
-			// CHANGE: In order to be able to move in the air
-			// Why 6 though?
-			Vector3 airMove = new Vector3(move.x * 6f, m_Rigidbody.velocity.y, move.z * 6f);
-			m_Rigidbody.velocity = Vector3.Lerp(m_Rigidbody.velocity, airMove, Time.deltaTime * 2f);
-
+		void HandleAirborneMovement() {
 			// apply extra gravity from multiplier:
 			Vector3 extraGravityForce = (Physics.gravity * m_GravityMultiplier) - Physics.gravity;
 			m_Rigidbody.AddForce(extraGravityForce);
@@ -168,14 +162,12 @@ namespace UnityStandardAssets.Characters.ThirdPerson {
 		public void OnAnimatorMove() {
 			// we implement this function to override the default root motion.
 			// this allows us to modify the positional speed before it's applied.
-			if (Time.deltaTime > 0) {
-				if (m_IsGrounded) {
-					Vector3 v = (m_Animator.deltaPosition * m_MoveSpeedMultiplier) / Time.deltaTime;
+			if (m_IsGrounded && Time.deltaTime > 0) {
+				Vector3 v = (m_Animator.deltaPosition * m_MoveSpeedMultiplier) / Time.deltaTime;
 
-					// we preserve the existing y part of the current velocity.
-					v.y = m_Rigidbody.velocity.y;
-					m_Rigidbody.velocity = v;
-				}
+				// we preserve the existing y part of the current velocity.
+				v.y = m_Rigidbody.velocity.y;
+				m_Rigidbody.velocity = v;
 			}
 		}
 
