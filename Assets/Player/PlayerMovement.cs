@@ -25,7 +25,6 @@ public class PlayerMovement : MonoBehaviour {
 
 		// get the third person character ( this should never be null due to require component )
 		m_Character = GetComponent<CustomThirdPersonCharacter>();
-		Debug.Log(m_Character == null);
 	}
 
 	void Update () {
