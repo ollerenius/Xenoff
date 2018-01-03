@@ -30,8 +30,6 @@ public class CustomThirdPersonCharacter : MonoBehaviour
 	bool m_Crouching;
 
 	float moveSpeedMultiplier, animSpeedMultiplier;
-	float moveSpeedSprintMultiplier, animSpeedSprintMultiplier;
-
 
 	void Start()
 	{
@@ -45,9 +43,7 @@ public class CustomThirdPersonCharacter : MonoBehaviour
 		m_OrigGroundCheckDistance = m_GroundCheckDistance;
 
 		moveSpeedMultiplier = m_MoveSpeedMultiplier;
-		moveSpeedSprintMultiplier = m_MoveSpeedSprintMultiplier;
 		animSpeedMultiplier = m_AnimSpeedMultiplier;
-		animSpeedSprintMultiplier = m_AnimSpeedSprintMultiplier;
 
 	}
 
