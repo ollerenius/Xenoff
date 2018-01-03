@@ -10,11 +10,13 @@ public class PlayerMovement : MonoBehaviour {
 	bool jump;                      
 
 	bool isSprinting;
+	CameraRaycaster cameraRaycaster;
 
 	void Start () {
 		// get the transform of the main camera
 		if (Camera.main != null) {
 			mainCamera = Camera.main.transform;
+			cameraRaycaster = mainCamera.GetComponent<CameraRaycaster>();
 		} else {
 			Debug.LogWarning(
 				"Warning: no main camera found. Third person character needs a Camera tagged \"MainCamera\", for camera-relative controls.", gameObject);
@@ -23,6 +25,13 @@ public class PlayerMovement : MonoBehaviour {
 
 		// get the third person character ( this should never be null due to require component )
 		character = GetComponent<CustomThirdPersonCharacter>();
+
+		cameraRaycaster.notifyMouseClickObservers += ProcessMouseClick;
+	}
+
+	// TODO: Consider moving this function (and functionality) to a "PlayerController" script or such.
+	void ProcessMouseClick(RaycastHit raycastHit, int layerHit) {
+		Debug.Log("Click!");
 	}
 
 	void Update () {
