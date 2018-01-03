@@ -8,9 +8,9 @@ using UnityStandardAssets.Characters.ThirdPerson;
 public class Enemy : MonoBehaviour, IDamageable {
 
 	[SerializeField]
-	float attackRange = 1f;
+	float aggroRadius = 10f;
 	[SerializeField]
-	float attackRadius = 4f;
+	float attackRadius = 5f;
 	[SerializeField]
 	float maxHealthPoints = 100f;
 	float currentHealthPoints = 100f;
@@ -24,14 +24,17 @@ public class Enemy : MonoBehaviour, IDamageable {
 
 	void Update() {
 		float distanceToPlayer = Vector3.Distance(player.transform.position, transform.position);
-		if (distanceToPlayer < attackRadius) {
+		if (distanceToPlayer <= attackRadius) {
+			print(gameObject.name + " attacking player");
+			// TODO: Perform attack (spawn projectile, etc)
+		}
+
+		if (distanceToPlayer <= aggroRadius) {
 			aiCharacterControl.SetTarget(player.transform);
 		} else {
 			aiCharacterControl.SetTarget(transform);
 		}
 	}
-
-	public float AttackRange { get { return attackRange; } }
 
 	public float HealthAsPercentage {
 		get {
@@ -44,7 +47,11 @@ public class Enemy : MonoBehaviour, IDamageable {
 	}
 
 	void OnDrawGizmos() {
-		Gizmos.color = Color.red;
-		Gizmos.DrawWireSphere(transform.position, attackRange);	
+		// Draw attack radius
+		Gizmos.color = new Color(255f, 0, 0, .5f);
+		Gizmos.DrawWireSphere(transform.position, attackRadius);
+		// Draw aggro radius
+		Gizmos.color = new Color(0, 0, 255f, .5f);
+		Gizmos.DrawWireSphere(transform.position, aggroRadius);
 	}
 }
