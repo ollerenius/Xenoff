@@ -4,17 +4,13 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+	[SerializeField] 
+	float damageCaused = 10f;
 
 	void OnTriggerEnter(Collider other) {
-		print("Projectile hit");
+		IDamageable damageable = other.transform.GetComponent<IDamageable>();
+		if (damageable != null) {
+			damageable.TakeDamage(damageCaused);
+		}
 	}
 }
