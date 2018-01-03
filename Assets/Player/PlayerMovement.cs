@@ -13,7 +13,6 @@ public class PlayerMovement : MonoBehaviour {
 	CameraRaycaster cameraRaycaster;
 
 	void Start () {
-		// get the transform of the main camera
 		if (Camera.main != null) {
 			mainCamera = Camera.main.transform;
 			cameraRaycaster = mainCamera.GetComponent<CameraRaycaster>();
@@ -23,15 +22,13 @@ public class PlayerMovement : MonoBehaviour {
 			// we use self-relative controls in this case, which probably isn't what the user wants, but hey, we warned them!
 		}
 
-		// get the third person character ( this should never be null due to require component )
 		character = GetComponent<CustomThirdPersonCharacter>();
 
 		cameraRaycaster.notifyMouseClickObservers += ProcessMouseClick;
 	}
 
-	// TODO: Consider moving this function (and functionality) to a "PlayerController" script or such.
+	// TODO: Consider moving this function (and functionality) to a PlayerController script or such.
 	void ProcessMouseClick(RaycastHit raycastHit, int layerHit) {
-		Debug.Log("Click!");
 	}
 
 	void Update () {
@@ -40,9 +37,7 @@ public class PlayerMovement : MonoBehaviour {
 		}
 	}
 
-	// Fixed update is called in sync with physics
 	void FixedUpdate() {
-		// read inputs
 		float h = Input.GetAxis("Horizontal");
 		float v = Input.GetAxis("Vertical");
 		bool crouch = Input.GetKey(KeyCode.C);
