@@ -1,22 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(CustomThirdPersonCharacter))]
 public class PlayerMovement : MonoBehaviour {
 
-	CustomThirdPersonCharacter m_Character; // A reference to the ThirdPersonCharacter on the object
-    Transform m_Cam;                  // A reference to the main camera in the scenes transform
-    Vector3 m_CamForward;             // The current forward direction of the camera
-    Vector3 m_Move;
-    bool m_Jump;                      // the world-relative desired move direction, calculated from the camForward and user input.
+	CustomThirdPersonCharacter character; // A reference to the ThirdPersonCharacter on the object
+	Transform mainCamera;                 // A reference to the main camera in the scenes transform
+	Vector3 camForward;             	  // The current forward direction of the camera
+	Vector3 move;					  	  // the world-relative desired move direction, calculated from the camForward and user input.
+	bool jump;                      
 
 	bool isSprinting;
 
 	void Start () {
 		// get the transform of the main camera
 		if (Camera.main != null) {
-			m_Cam = Camera.main.transform;
+			mainCamera = Camera.main.transform;
 		} else {
 			Debug.LogWarning(
 				"Warning: no main camera found. Third person character needs a Camera tagged \"MainCamera\", for camera-relative controls.", gameObject);
@@ -24,12 +22,12 @@ public class PlayerMovement : MonoBehaviour {
 		}
 
 		// get the third person character ( this should never be null due to require component )
-		m_Character = GetComponent<CustomThirdPersonCharacter>();
+		character = GetComponent<CustomThirdPersonCharacter>();
 	}
 
 	void Update () {
-		if (!m_Jump) {
-			m_Jump = Input.GetButtonDown("Jump");
+		if (!jump) {
+			jump = Input.GetButtonDown("Jump");
 		}
 	}
 
@@ -45,21 +43,17 @@ public class PlayerMovement : MonoBehaviour {
 		}
 
 		// calculate move direction to pass to character
-		if (m_Cam != null) {
+		if (mainCamera != null) {
 			// calculate camera relative direction to move:
-			m_CamForward = Vector3.Scale(m_Cam.forward, new Vector3(1, 0, 1)).normalized;
-			m_Move = v * m_CamForward + h * m_Cam.right;
+			camForward = Vector3.Scale(mainCamera.forward, new Vector3(1, 0, 1)).normalized;
+			move = v * camForward + h * mainCamera.right;
 		} else {
 			// we use world-relative directions in the case of no main camera
-			m_Move = v * Vector3.forward + h * Vector3.right;
+			move = v * Vector3.forward + h * Vector3.right;
 		}
 
 		// pass all parameters to the character control script
-		m_Character.Move(m_Move, crouch, m_Jump, isSprinting);
-		m_Jump = false;
-	}
-
-	void OnDrawGizmos() {
-		Gizmos.color = Color.black;
+		character.Move(move, crouch, jump, isSprinting);
+		jump = false;
 	}
 }
