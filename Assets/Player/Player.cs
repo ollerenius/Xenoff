@@ -4,11 +4,36 @@ using UnityEngine;
 
 public class Player : MonoBehaviour, IDamageable {
 
-	[SerializeField]
-	float attackRange = 1f;
-	[SerializeField]
-	float maxHealthPoints = 100f;
+	[SerializeField] int enemyLayer = 9;
+
+	[SerializeField] float maxHealthPoints = 100f;
+	[SerializeField] float attackRange = 1f;
+	[SerializeField] float damagePerHit = 20f;
+	[SerializeField] float minTimeBetweenHits = .5f;
+
+	GameObject currentTarget;
 	float currentHealthPoints = 100f;
+	CameraRaycaster cameraRaycaster = null;
+	float lastHitTime = 0;
+
+	private void Start() {
+		cameraRaycaster = FindObjectOfType<CameraRaycaster>();
+		cameraRaycaster.notifyMouseClickObservers += OnMouseClick;
+	}
+
+	void OnMouseClick(RaycastHit raycastHit, int layerHit) {
+		if (layerHit == enemyLayer) {
+			var enemy = raycastHit.collider.gameObject;
+			currentTarget = enemy;
+			var damageable = enemy.GetComponent<IDamageable>();
+
+			float distanceToEnemy = Vector3.Distance(transform.position, currentTarget.transform.position);
+			if (distanceToEnemy <= attackRange && damageable != null && Time.time - lastHitTime > minTimeBetweenHits) {
+				damageable.TakeDamage(damagePerHit);
+				lastHitTime = Time.time;
+			}
+		}
+	}
 
 	public float AttackRange { get { return attackRange; } }
 
@@ -20,7 +45,6 @@ public class Player : MonoBehaviour, IDamageable {
 
 	public void TakeDamage(float damage) {
 		currentHealthPoints = Mathf.Clamp(currentHealthPoints - damage, 0f, maxHealthPoints);
-		if (currentHealthPoints <= 0) { Destroy(gameObject); }
 	}
 
 	void OnDrawGizmos() {
