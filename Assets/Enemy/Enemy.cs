@@ -7,13 +7,15 @@ using UnityStandardAssets.Characters.ThirdPerson;
 [RequireComponent(typeof(AICharacterControl))]
 public class Enemy : MonoBehaviour, IDamageable {
 
-	[SerializeField]
-	float aggroRadius = 10f;
-	[SerializeField]
-	float attackRadius = 5f;
-	[SerializeField]
-	float maxHealthPoints = 100f;
+	[SerializeField] float aggroRadius = 10f;
+	[SerializeField] float attackRadius = 5f;
+	[SerializeField] float damagePerShot = 9f;
+	[SerializeField] GameObject projectileToUse;
+	[SerializeField] GameObject projectileSocket;
+
+	[SerializeField] float maxHealthPoints = 100f;
 	float currentHealthPoints = 100f;
+
 	AICharacterControl aiCharacterControl;
 	GameObject player;
 
@@ -25,8 +27,7 @@ public class Enemy : MonoBehaviour, IDamageable {
 	void Update() {
 		float distanceToPlayer = Vector3.Distance(player.transform.position, transform.position);
 		if (distanceToPlayer <= attackRadius) {
-			print(gameObject.name + " attacking player");
-			// TODO: Perform attack (spawn projectile, etc)
+			SpawnProjectile();
 		}
 
 		if (distanceToPlayer <= aggroRadius) {
@@ -34,6 +35,17 @@ public class Enemy : MonoBehaviour, IDamageable {
 		} else {
 			aiCharacterControl.SetTarget(transform);
 		}
+	}
+
+	void SpawnProjectile() {
+		GameObject newProjectile = Instantiate(projectileToUse, projectileSocket.transform.position, Quaternion.identity);
+		Projectile projectileComponent = newProjectile.GetComponent<Projectile>();
+		projectileComponent.damageCaused = damagePerShot;
+
+		Vector3 unitVectorToPlayer = (player.transform.position - projectileSocket.transform.position).normalized;
+		float projectileSpeed = projectileComponent.projectileSpeed;
+		newProjectile.GetComponent<Rigidbody>().velocity = unitVectorToPlayer * projectileSpeed;
+
 	}
 
 	public float HealthAsPercentage {
