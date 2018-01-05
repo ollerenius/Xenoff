@@ -8,6 +8,7 @@ using UnityStandardAssets.Characters.ThirdPerson;
 public class Enemy : MonoBehaviour, IDamageable {
 
 	[SerializeField] float aggroRadius = 10f;
+	[SerializeField] float escpapeRadius = 20f;
 	[SerializeField] float attackRadius = 5f;
 	[SerializeField] float damagePerShot = 9f;
 	[SerializeField] float secondsBetweenShots = .5f;
@@ -21,17 +22,28 @@ public class Enemy : MonoBehaviour, IDamageable {
 
 	AICharacterControl aiCharacterControl;
 	GameObject player;
+	CombatController combatController;
 
+	bool isEngaged = false;
 	bool isAttacking = false;
 
 	void Start() {
 		currentHealthPoints = maxHealthPoints;
 		player = GameObject.FindGameObjectWithTag("Player");
 		aiCharacterControl = GetComponent<AICharacterControl>();
+		combatController = GameObject.Find("CombatController").GetComponent<CombatController>();
+		if (combatController == null)
+			Debug.LogWarning("combatController is null - remember to add the prefab to the scene!");
 	}
 
 	void Update() {
+		ManageCombat();
+	}
+
+	void ManageCombat() {
 		float distanceToPlayer = Vector3.Distance(player.transform.position, transform.position);
+
+		// Attack player if close enough
 		if (distanceToPlayer <= attackRadius && !isAttacking) {
 			isAttacking = true;
 			InvokeRepeating("SpawnProjectile", 0, secondsBetweenShots); // TODO: Switch to coroutines (*spit*)
@@ -41,10 +53,22 @@ public class Enemy : MonoBehaviour, IDamageable {
 			CancelInvoke();
 		}
 
-		if (distanceToPlayer <= aggroRadius) {
-			aiCharacterControl.SetTarget(player.transform);
+		// Engage enemy if close enough
+		if (!isEngaged) {
+			if (distanceToPlayer <= aggroRadius) {
+				isEngaged = true;
+				aiCharacterControl.SetTarget(player.transform); // TODO: Consider storing this as a member variable in this class?
+				combatController.EnemyEngage(this);
+			} else {
+				aiCharacterControl.SetTarget(transform);
+			}
 		} else {
-			aiCharacterControl.SetTarget(transform);
+			// If player gets far enough, disengage
+			if (distanceToPlayer > escpapeRadius) {
+				isEngaged = false;
+				aiCharacterControl.SetTarget(transform);
+				combatController.EnemyDisengage(this);
+			}
 		}
 	}
 
@@ -66,8 +90,11 @@ public class Enemy : MonoBehaviour, IDamageable {
 	}
 
 	public void TakeDamage(float damage) {
-		currentHealthPoints = Mathf.Clamp(currentHealthPoints - damage, 0f, maxHealthPoints);
-		if (currentHealthPoints <= 0) { Destroy(gameObject); }
+		currentHealthPoints = Mathf.Clamp(currentHealthPoints - damage, 0, maxHealthPoints);
+		if (currentHealthPoints <= 0) { 
+			combatController.EnemyDisengage(this);
+			Destroy(gameObject);
+		}
 	}
 
 	void OnDrawGizmos() {
