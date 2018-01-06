@@ -22,7 +22,6 @@ public class Enemy : MonoBehaviour, IDamageable {
 
 	AICharacterControl aiCharacterControl;
 	GameObject player;
-	CombatController combatController;
 
 	bool isEngaged = false;
 	bool isAttacking = false;
@@ -31,9 +30,9 @@ public class Enemy : MonoBehaviour, IDamageable {
 		currentHealthPoints = maxHealthPoints;
 		player = GameObject.FindGameObjectWithTag("Player");
 		aiCharacterControl = GetComponent<AICharacterControl>();
-		combatController = GameObject.Find("CombatController").GetComponent<CombatController>();
-		if (combatController == null)
-			Debug.LogWarning("combatController is null - remember to add the prefab to the scene!");
+		//combatController = GameObject.Find("CombatController").GetComponent<CombatController>();
+		//if (combatController == null)
+			//Debug.LogWarning("combatController is null - remember to add the prefab to the scene!");
 	}
 
 	void Update() {
@@ -58,7 +57,7 @@ public class Enemy : MonoBehaviour, IDamageable {
 			if (distanceToPlayer <= aggroRadius) {
 				isEngaged = true;
 				aiCharacterControl.SetTarget(player.transform); // TODO: Consider storing this as a member variable in this class?
-				combatController.EnemyEngage(this);
+				CombatController.instance.EnemyEngage(this);
 			} else {
 				aiCharacterControl.SetTarget(transform);
 			}
@@ -67,7 +66,7 @@ public class Enemy : MonoBehaviour, IDamageable {
 			if (distanceToPlayer > escpapeRadius) {
 				isEngaged = false;
 				aiCharacterControl.SetTarget(transform);
-				combatController.EnemyDisengage(this);
+				CombatController.instance.EnemyDisengage(this);
 			}
 		}
 	}
@@ -83,16 +82,12 @@ public class Enemy : MonoBehaviour, IDamageable {
 
 	}
 
-	public float HealthAsPercentage {
-		get {
-			return currentHealthPoints / maxHealthPoints;
-		}
-	}
+	public float HealthAsPercentage { get { return currentHealthPoints / maxHealthPoints; } }
 
 	public void TakeDamage(float damage) {
 		currentHealthPoints = Mathf.Clamp(currentHealthPoints - damage, 0, maxHealthPoints);
 		if (currentHealthPoints <= 0) { 
-			combatController.EnemyDisengage(this);
+			CombatController.instance.EnemyDisengage(this);
 			Destroy(gameObject);
 		}
 	}

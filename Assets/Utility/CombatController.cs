@@ -16,12 +16,22 @@ public enum CombatState {
 /// attacks an enemy.
 public class CombatController : MonoBehaviour {
 
+	public static CombatController instance;
+
 	CombatState currentState = CombatState.DEFAULT;
 	List<Enemy> currentlyEngagedEnemies;
+	Enemy currentlyTargetedEnemy;
 
 	// Delegate for notifying listeners when the combat state is changed
 	public delegate void OnCombatStateChange(CombatState state);
 	public event OnCombatStateChange notifyCombatStateChangeObservers;
+
+	public delegate void OnTargetChange(Enemy newTarget);
+	public event OnTargetChange notifyOnTargetChangeListeners;
+
+	void Awake() {
+		instance = this;
+	}
 
 	void Start() {
 		currentlyEngagedEnemies = new List<Enemy>();
@@ -39,12 +49,15 @@ public class CombatController : MonoBehaviour {
 		currentlyEngagedEnemies.Remove(enemy);
 		if (currentlyEngagedEnemies.Count == 0 && currentState != CombatState.DEFAULT) {
 			// All enemies are dead or gone for some reason
+			currentlyTargetedEnemy = null;
 			ChangeState(CombatState.DEFAULT);
 		}
 	}
 
-	public void PlayerAttack() {
-		if (currentState == CombatState.DEFAULT) {
+	public void PlayerAttack(Enemy enemy) {
+		currentlyTargetedEnemy = enemy;
+		notifyOnTargetChangeListeners(enemy);
+		if (currentState != CombatState.COMBAT) {
 			ChangeState(CombatState.COMBAT);
 		}
 	}
@@ -55,5 +68,7 @@ public class CombatController : MonoBehaviour {
 	}
 
 	public CombatState CurrentState { get { return currentState; } }
+
+	public Enemy CurrentlyTargetedEnemy { get { return currentlyTargetedEnemy; } }
 
 }

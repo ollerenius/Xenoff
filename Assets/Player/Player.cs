@@ -16,14 +16,14 @@ public class Player : MonoBehaviour, IDamageable {
 	CameraRaycaster cameraRaycaster = null;
 	float lastHitTime = 0;
 
-	CombatController combatController;
+	//CombatController combatController;
 
 	void Start() {
 		cameraRaycaster = FindObjectOfType<CameraRaycaster>();
 		cameraRaycaster.notifyMouseClickObservers += OnMouseClick;
-		combatController = GameObject.Find("CombatController").GetComponent<CombatController>();
-		if (combatController == null)
-			Debug.LogWarning("combatController is null - remember to add the prefab to the scene!");
+		//combatController = GameObject.Find("CombatController").GetComponent<CombatController>();
+		//if (combatController == null)
+			//Debug.LogWarning("combatController is null - remember to add the prefab to the scene!");
 	}
 
 	void Update() {
@@ -41,7 +41,7 @@ public class Player : MonoBehaviour, IDamageable {
 		if (layerHit == enemyLayer) {
 			var enemy = raycastHit.collider.gameObject;
 			currentTarget = enemy;
-			combatController.PlayerAttack();
+			CombatController.instance.PlayerAttack(enemy.GetComponent<Enemy>());
 		}
 	}
 
