@@ -14,16 +14,11 @@ public class Player : MonoBehaviour, IDamageable {
 	GameObject currentTarget;
 	float currentHealthPoints = 100f;
 	CameraRaycaster cameraRaycaster = null;
-	float lastHitTime = 0;
-
-	//CombatController combatController;
+	float lastHitTime;
 
 	void Start() {
 		cameraRaycaster = FindObjectOfType<CameraRaycaster>();
 		cameraRaycaster.notifyMouseClickObservers += OnMouseClick;
-		//combatController = GameObject.Find("CombatController").GetComponent<CombatController>();
-		//if (combatController == null)
-			//Debug.LogWarning("combatController is null - remember to add the prefab to the scene!");
 	}
 
 	void Update() {
