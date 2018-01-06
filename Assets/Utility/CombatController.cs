@@ -38,6 +38,8 @@ public class CombatController : MonoBehaviour {
 	}
 
 	public void EnemyEngage(Enemy enemy) {
+		// TODO: CHECK IF THIS WORKS PROPERLY
+		// Sometimes, the state is set to Engaged even though the player is attacking allready (Combat state)
 		currentlyEngagedEnemies.Add(enemy);
 		if (currentState == CombatState.DEFAULT) {
 			currentState = CombatState.ENGAGED;

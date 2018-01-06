@@ -7,6 +7,7 @@ using UnityStandardAssets.Characters.ThirdPerson;
 [RequireComponent(typeof(AICharacterControl))]
 public class Enemy : MonoBehaviour, IDamageable {
 
+	[SerializeField] bool isAggressive;
 	[SerializeField] float aggroRadius = 10f;
 	[SerializeField] float escpapeRadius = 20f;
 	[SerializeField] float attackRadius = 5f;
@@ -23,16 +24,19 @@ public class Enemy : MonoBehaviour, IDamageable {
 	AICharacterControl aiCharacterControl;
 	GameObject player;
 
-	bool isEngaged = false;
-	bool isAttacking = false;
+	bool isEngaged;
+	bool isAttacking;
 
 	void Start() {
 		currentHealthPoints = maxHealthPoints;
 		player = GameObject.FindGameObjectWithTag("Player");
 		aiCharacterControl = GetComponent<AICharacterControl>();
-		//combatController = GameObject.Find("CombatController").GetComponent<CombatController>();
-		//if (combatController == null)
-			//Debug.LogWarning("combatController is null - remember to add the prefab to the scene!");
+		// Being non-aggressive means that the enemy will never attack the player by itself. 
+		// Therefore, this is sufficient.
+		// TODO: Put if statement in combat management method instead
+		if (!isAggressive) {
+			aggroRadius = 0;
+		}
 	}
 
 	void Update() {
@@ -43,7 +47,7 @@ public class Enemy : MonoBehaviour, IDamageable {
 		float distanceToPlayer = Vector3.Distance(player.transform.position, transform.position);
 
 		// Attack player if close enough
-		if (distanceToPlayer <= attackRadius && !isAttacking) {
+		if (distanceToPlayer <= attackRadius && !isAttacking && isEngaged) {
 			isAttacking = true;
 			InvokeRepeating("SpawnProjectile", 0, secondsBetweenShots); // TODO: Switch to coroutines (*spit*)
 		}
@@ -55,18 +59,14 @@ public class Enemy : MonoBehaviour, IDamageable {
 		// Engage enemy if close enough
 		if (!isEngaged) {
 			if (distanceToPlayer <= aggroRadius) {
-				isEngaged = true;
-				aiCharacterControl.SetTarget(player.transform); // TODO: Consider storing this as a member variable in this class?
-				CombatController.instance.EnemyEngage(this);
+				EngagePlayer();
 			} else {
 				aiCharacterControl.SetTarget(transform);
 			}
 		} else {
 			// If player gets far enough, disengage
 			if (distanceToPlayer > escpapeRadius) {
-				isEngaged = false;
-				aiCharacterControl.SetTarget(transform);
-				CombatController.instance.EnemyDisengage(this);
+				DisengagePlayer();
 			}
 		}
 	}
@@ -82,12 +82,35 @@ public class Enemy : MonoBehaviour, IDamageable {
 
 	}
 
+	/// <summary>
+	/// This method is called when the enemy notices or is attacked by the player.
+	/// </summary>
+	void EngagePlayer() {
+		if (!isEngaged) {
+			isEngaged = true;
+			aiCharacterControl.SetTarget(player.transform);
+			CombatController.instance.EnemyEngage(this);
+		}
+	}
+
+	/// <summary>
+	/// This method is called when the enemy loses interest in the player (if it runs away, for instance)
+	/// </summary>
+	void DisengagePlayer() {
+		if (isEngaged) {
+			isEngaged = false;
+			aiCharacterControl.SetTarget(transform);
+			CombatController.instance.EnemyDisengage(this);
+		}
+	}
+
 	public float HealthAsPercentage { get { return currentHealthPoints / maxHealthPoints; } }
 
 	public void TakeDamage(float damage) {
 		currentHealthPoints = Mathf.Clamp(currentHealthPoints - damage, 0, maxHealthPoints);
+		EngagePlayer();
 		if (currentHealthPoints <= 0) { 
-			CombatController.instance.EnemyDisengage(this);
+			DisengagePlayer();
 			Destroy(gameObject);
 		}
 	}
